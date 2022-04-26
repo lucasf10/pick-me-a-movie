@@ -2,6 +2,7 @@
   <section class="login-page">
     <div class="container">
       <div class="box">
+        <app-logo spaced />
         <form @submit.prevent="login()">
           <b-field>
               <b-input
@@ -38,6 +39,7 @@
 
 <script>
 import { mapActions } from 'vuex';
+import Logo from '../components/Logo.vue';
 
 export default {
   name: 'LoginView',
@@ -47,7 +49,9 @@ export default {
       password: '',
     };
   },
-  components: {},
+  components: {
+    'app-logo': Logo,
+  },
   methods: {
     ...mapActions('user', ['loginAction']),
     login() {

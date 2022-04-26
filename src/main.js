@@ -11,7 +11,7 @@ import store from './store';
 
 import 'buefy/dist/buefy.css';
 import '@mdi/font/css/materialdesignicons.css';
-import '@/assets/scss/global.scss';
+import '@/assets/scss/global.sass';
 
 Vue.config.productionTip = false;
 

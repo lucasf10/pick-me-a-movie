@@ -1,5 +1,6 @@
 <template>
   <div class="home">
+    <top-header backButton />
     <b-button
       @click=logoutAction
       type="primary"
@@ -10,9 +11,13 @@
 
 <script>
 import { mapActions } from 'vuex';
+import TopHeader from '../components/TopHeader.vue';
 
 export default {
   name: 'HomeView',
+  components: {
+    'top-header': TopHeader,
+  },
   methods: {
     ...mapActions('user', ['logoutAction']),
   },
