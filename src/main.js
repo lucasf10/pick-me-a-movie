@@ -15,15 +15,15 @@ import '@/assets/scss/global.scss';
 
 Vue.config.productionTip = false;
 
-// Firebase congfid
+// Firebase config
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyChm9uPm3Z4EcdNDGqtyd8401sRL5Cieck',
-  authDomain: 'pick-me-a-movie.firebaseapp.com',
-  projectId: 'pick-me-a-movie',
-  storageBucket: 'pick-me-a-movie.appspot.com',
-  messagingSenderId: '1030583053842',
-  appId: '1:1030583053842:web:ecaecc12ea110718e7b2cb',
+  apiKey: process.env.VUE_APP_API_KEY,
+  authDomain: process.env.VUE_APP_AUTH_DOMAIN,
+  projectId: process.env.VUE_APP_PROJECT_ID,
+  storageBucket: process.env.VUE_APP_STORAGE_BUCKET,
+  messagingSenderId: process.env.VUE_APP_MESSAGING_SENDER_ID,
+  appId: process.env.VUE_APP_APP_ID,
 };
 
 initializeApp(firebaseConfig);
