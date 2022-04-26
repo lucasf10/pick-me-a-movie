@@ -6,12 +6,16 @@
       <b-table
         class="mb-4"
         hoverable
-        :paginated="groups && groups.length > 5"
+        :paginated="groups && Object.values(groups).length > 5"
         per-page="5"
-        :data="groups"
+        :data="Object.values(groups)"
         :columns="columns"
         @click="selectMovie($event.code)"
-      ></b-table>
+      >
+        <template #empty>
+          <div class="has-text-centered">No groups yet.</div>
+        </template>
+      </b-table>
 
       <div class="box-footer">
         <b-button @click="showJoinGroupModal = true">Join a group</b-button>
@@ -42,7 +46,7 @@
 </template>
 
 <script>
-// import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import TopHeader from '../components/TopHeader.vue';
 import GroupActionModal from '../components/GroupActionModal.vue';
 
@@ -52,31 +56,11 @@ export default {
     'top-header': TopHeader,
     'group-action-modal': GroupActionModal,
   },
+  mounted() {
+    this.getGroups();
+  },
   data() {
     return {
-      groups: [
-        {
-          code: '-GAha45h4as',
-          name: 'Group 1',
-          created_at: '2016-10-15 13:43:27',
-          created_by: 'Lucas Silva',
-          n_movies: 2,
-        },
-        {
-          code: '-KwSgas6457a',
-          name: 'Group 2',
-          created_by: 'Lucas Silva',
-          created_at: '2016-12-15 06:00:53',
-          n_movies: 2,
-        },
-        {
-          code: '-GAha45h4as',
-          name: 'Group 1',
-          created_at: '2016-10-15 13:43:27',
-          created_by: 'Lucas Silva',
-          n_movies: 2,
-        },
-      ],
       columns: [
         {
           field: 'name',
@@ -108,7 +92,14 @@ export default {
       showCreateGroupModal: false,
     };
   },
+  computed: {
+    ...mapGetters('groups', ['groups']),
+    groupList() {
+      return this.groups.map();
+    },
+  },
   methods: {
+    ...mapActions('groups', ['getGroups']),
     selectMovie(movieCode) {
       console.log('movieCode', movieCode);
     },
