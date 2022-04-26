@@ -2,7 +2,7 @@
   <section class="login-page">
     <div class="container">
       <div class="box">
-        <form @submit="login()">
+        <form @submit.prevent="login()">
           <b-field>
               <b-input
                 required

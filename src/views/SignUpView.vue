@@ -2,7 +2,7 @@
   <section class="login-page">
     <div class="container">
       <div class="box">
-        <form @submit="signUp">
+        <form @submit.prevent="signUp">
           <b-field>
               <b-input
                 placeholder="Nome"

@@ -9,6 +9,9 @@ const initialState = () => ({ user: null });
 export default {
   state: initialState(),
   getters: {
+    isLoggedIn(state) {
+      return !!state.user;
+    },
   },
   mutations: {
     setUser(state, payload) {
@@ -23,7 +26,7 @@ export default {
             displayName: this.name,
           });
           commit('setUser', userCredential.user);
-          router.push('/dashboard');
+          router.push('/');
         }).catch((err) => {
           Dialog.alert(`Something went wrong: ${err}`);
         });
@@ -32,11 +35,16 @@ export default {
       signInWithEmailAndPassword(getAuth(), payload.email, payload.password)
         .then((userCredential) => {
           commit('setUser', userCredential.user);
-          router.push('/dashboard');
+          router.push('/');
         })
         .catch((err) => {
           Dialog.alert(`Something went wrong: ${err}`);
         });
+    },
+    logoutAction({ commit }) {
+      sessionStorage.clear();
+      commit('setUser', null);
+      router.push('/login');
     },
   },
   namespaced: true,
