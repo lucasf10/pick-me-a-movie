@@ -11,9 +11,6 @@ export default {
   props: {
     spaced: Boolean,
   },
-  created() {
-    console.log(this.spaced);
-  },
 };
 </script>
 
