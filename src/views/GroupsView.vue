@@ -36,13 +36,28 @@
         </b-table-column>
 
         <b-table-column v-slot="props">
-          <b-tooltip label="Leave group" >
-            <b-button
-              @click.prevent="leaveGroup($event, props.row.code)"
-              icon-left="delete"
-              size="is-small"
-            />
-          </b-tooltip>
+          <div class="actions">
+            <b-tooltip
+              label="Leave group"
+              position="is-left"
+            >
+              <b-button
+                @click.prevent="leaveGroup($event, props.row.code)"
+                icon-left="delete"
+                size="is-small"
+              />
+            </b-tooltip>
+            <b-tooltip
+              label="Copy code"
+              position="is-left"
+            >
+              <b-button
+                @click.prevent="copyToClipboard($event, props.row.code)"
+                icon-left="content-copy"
+                size="is-small"
+              />
+            </b-tooltip>
+          </div>
         </b-table-column>
       </b-table>
 
@@ -142,6 +157,10 @@ export default {
       event.stopPropagation();
       this.leaveGroupAction({ groupCode, userUID: this.user.uid });
     },
+    copyToClipboard(event, groupCode) {
+      event.stopPropagation();
+      navigator.clipboard.writeText(groupCode);
+    },
   },
 };
 </script>
@@ -183,6 +202,10 @@ export default {
         .pagination-previous
           padding-left: 0.3em
           padding-right: 0.3em
+
+      .actions
+        display: flex
+        gap: 8px
 
     .modal-card
       width: 100%
