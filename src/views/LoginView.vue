@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import Logo from '../components/Logo.vue';
 
 export default {
@@ -49,8 +49,14 @@ export default {
       password: '',
     };
   },
+  beforeMount() {
+    if (this.isLoggedIn) this.$router.push('/');
+  },
   components: {
     'app-logo': Logo,
+  },
+  computed: {
+    ...mapGetters('user', ['isLoggedIn']),
   },
   methods: {
     ...mapActions('user', ['loginAction']),

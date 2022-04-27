@@ -59,6 +59,9 @@ export default {
   mounted() {
     this.getGroups();
   },
+  beforeMount() {
+    if (!this.isLoggedIn) this.$router.push('/login');
+  },
   data() {
     return {
       columns: [
@@ -94,6 +97,7 @@ export default {
   },
   computed: {
     ...mapGetters('groups', ['groups']),
+    ...mapGetters('user', ['isLoggedIn']),
     groupList() {
       return this.groups.map();
     },

@@ -53,7 +53,7 @@
           <b-button native-type="submit" class="mt-2 mb-4">Sign Up</b-button>
         </form>
         <div class="switch-form">
-          <p>Already have an account? <router-link to="/">Sign in!</router-link></p>
+          <p>Already have an account? <router-link to="/login">Sign in!</router-link></p>
         </div>
       </div>
     </div>
@@ -61,7 +61,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import Logo from '../components/Logo.vue';
 
 export default {
@@ -76,6 +76,12 @@ export default {
   },
   components: {
     'app-logo': Logo,
+  },
+  beforeMount() {
+    if (this.isLoggedIn) this.$router.push('/');
+  },
+  computed: {
+    ...mapGetters('user', ['isLoggedIn']),
   },
   methods: {
     ...mapActions('user', ['signUpAction']),
