@@ -28,6 +28,7 @@ export default {
       snapshots.forEach((snap) => {
         groups[snap.id] = snap.data();
       });
+      console.log(groups);
       commit('setGroups', groups);
     },
     async createGroupAction({ dispatch }, payload) {
