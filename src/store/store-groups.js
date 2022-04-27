@@ -4,7 +4,7 @@ import {
   getAuth, createUserWithEmailAndPassword, updateProfile, signInWithEmailAndPassword,
 } from 'firebase/auth';
 import {
-  collection, getFirestore, addDoc, getDocs, Timestamp, updateDoc, arrayUnion, doc,
+  collection, getFirestore, addDoc, getDocs, Timestamp, updateDoc, arrayUnion, doc, query, where,
 } from 'firebase/firestore';
 
 const initialState = () => ({ groups: {} });
@@ -52,8 +52,11 @@ export default {
       commit('setUser', null);
       router.push('/login');
     },
-    async getGroups({ commit }) {
-      const snapshots = await getDocs(collection(getFirestore(), 'groups'));
+    async getGroups({ commit }, payload) {
+      const snapshots = await getDocs(query(
+        collection(getFirestore(), 'groups'),
+        where('users', 'array-contains', payload.userUID),
+      ));
       const groups = {};
       snapshots.forEach((snap) => {
         groups[snap.id] = snap.data();
@@ -68,13 +71,13 @@ export default {
         movies: [],
         created_by: payload.userDisplayName,
       });
-      dispatch('getGroups');
+      dispatch('getGroups', { userUID: payload.userUID });
     },
     async joinGroup({ dispatch }, payload) {
       await updateDoc(doc(getFirestore(), 'groups', payload.groupCode), {
         users: arrayUnion(payload.userUID),
       });
-      dispatch('getGroups');
+      dispatch('getGroups', { userUID: payload.userUID });
     },
   },
   namespaced: true,

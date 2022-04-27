@@ -57,7 +57,7 @@ export default {
     'group-action-modal': GroupActionModal,
   },
   mounted() {
-    this.getGroups();
+    this.getGroups({ userUID: this.user.uid });
   },
   beforeMount() {
     if (!this.isLoggedIn) this.$router.push('/login');
@@ -100,8 +100,9 @@ export default {
     ...mapGetters('user', ['isLoggedIn', 'user']),
     groupList() {
       return Object.entries(this.groups).map((group) => {
-        // eslint-disable-next-line max-len
-        const dateFormat = new Date(group[1].created_at.seconds * 1000 + group[1].created_at.nanoseconds / 100000).toDateString();
+        const dateFormat = new Date(
+          group[1].created_at.seconds * 1000 + group[1].created_at.nanoseconds / 100000,
+        ).toDateString();
         return {
           name: group[1].name,
           created_by: group[1].created_by,
