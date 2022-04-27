@@ -10,7 +10,6 @@
             v-model="value"
             type="text"
             :placeholder="placeholder"
-            required
             ref="input"
           />
         </b-field>
@@ -20,6 +19,7 @@
           native-type="submit"
           :label="buttonLabel"
           type="is-primary"
+          :disabled="!value"
         />
       </footer>
     </form>
