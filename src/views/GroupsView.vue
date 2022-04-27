@@ -9,12 +9,39 @@
         :paginated="groups && Object.values(groups).length > 5"
         per-page="5"
         :data="groupList"
-        :columns="columns"
-        @click="selectMovie($event.code)"
+        @click="$router.push(`/group/${$event.code}`)"
       >
         <template #empty>
           <div class="has-text-centered">No groups yet.</div>
         </template>
+
+        <b-table-column field="name" label="Name" centered v-slot="props">
+          {{ props.row.name }}
+        </b-table-column>
+
+        <b-table-column field="first_name" label="By" centered v-slot="props">
+          {{ props.row.created_by }}
+        </b-table-column>
+
+        <b-table-column field="at" label="At" centered v-slot="props">
+          {{ props.row.created_at }}
+        </b-table-column>
+
+        <b-table-column field="n_movies" label="# Movies" centered v-slot="props">
+          {{ props.row.n_movies }}
+        </b-table-column>
+
+        <b-table-column field="code" label="Code" centered v-slot="props">
+          {{ props.row.code }}
+        </b-table-column>
+
+        <b-table-column v-slot="props">
+          <b-button
+            @click.prevent="leaveGroup($event, props.row.code)"
+            icon-left="delete"
+            size="is-small"
+          />
+        </b-table-column>
       </b-table>
 
       <div class="box-footer">
@@ -57,40 +84,13 @@ export default {
     'group-action-modal': GroupActionModal,
   },
   mounted() {
-    this.getGroups({ userUID: this.user.uid });
+    this.getGroupsAction({ userUID: this.user.uid });
   },
   beforeMount() {
     if (!this.isLoggedIn) this.$router.push('/login');
   },
   data() {
     return {
-      columns: [
-        {
-          field: 'name',
-          label: 'Name',
-          centered: true,
-        },
-        {
-          field: 'created_by',
-          label: 'By',
-          centered: true,
-        },
-        {
-          field: 'created_at',
-          label: 'At',
-          centered: true,
-        },
-        {
-          field: 'n_movies',
-          label: '# Movies',
-          centered: true,
-        },
-        {
-          field: 'code',
-          label: 'Code',
-          centered: true,
-        },
-      ],
       showJoinGroupModal: false,
       showCreateGroupModal: false,
     };
@@ -114,14 +114,11 @@ export default {
     },
   },
   methods: {
-    ...mapActions('groups', ['getGroups', 'createGroup', 'joinGroup']),
-    selectMovie(movieCode) {
-      console.log('movieCode', movieCode);
-    },
+    ...mapActions('groups', ['getGroupsAction', 'createGroupAction', 'joinGroupAction', 'leaveGroupAction']),
     onJoinGroup() {
       const groupCode = this.$refs.joinGroupModal.$data.value;
       if (groupCode && groupCode !== '') {
-        this.joinGroup({
+        this.joinGroupAction({
           groupCode,
           userUID: this.user.uid,
         });
@@ -131,7 +128,7 @@ export default {
     onCreateGroup() {
       const groupName = this.$refs.createGroupModal.$data.value;
       if (groupName && groupName !== '') {
-        this.createGroup({
+        this.createGroupAction({
           groupName,
           userUID: this.user.uid,
           userDisplayName: this.user.displayName,
@@ -139,22 +136,26 @@ export default {
       }
       this.showCreateGroupModal = false;
     },
+    leaveGroup(event, groupCode) {
+      event.stopPropagation();
+      this.leaveGroupAction({ groupCode, userUID: this.user.uid });
+    },
   },
 };
 </script>
 
 <style lang="sass">
   .groups-page
+    .button
+      transition: 0.3s
+      &:hover
+        border-color: rgb(142, 45, 226)
+        background-color: rgba(142, 45, 226, 0.1)
+
     .box-footer
       display: flex
       gap: 15px
       justify-content: center
-
-      .button
-        transition: 0.3s
-        &:hover
-          border-color: rgb(142, 45, 226)
-          background-color: rgba(142, 45, 226, 0.1)
 
     .b-table
       .table.is-hoverable

@@ -4,7 +4,9 @@ import {
   getAuth, createUserWithEmailAndPassword, updateProfile, signInWithEmailAndPassword,
 } from 'firebase/auth';
 import {
-  collection, getFirestore, addDoc, getDocs, Timestamp, updateDoc, arrayUnion, doc, query, where,
+  collection, getFirestore, addDoc, getDocs,
+  Timestamp, updateDoc, arrayUnion, doc, query, where,
+  arrayRemove,
 } from 'firebase/firestore';
 
 const initialState = () => ({ groups: {} });
@@ -52,7 +54,7 @@ export default {
       commit('setUser', null);
       router.push('/login');
     },
-    async getGroups({ commit }, payload) {
+    async getGroupsAction({ commit }, payload) {
       const snapshots = await getDocs(query(
         collection(getFirestore(), 'groups'),
         where('users', 'array-contains', payload.userUID),
@@ -63,7 +65,7 @@ export default {
       });
       commit('setGroups', groups);
     },
-    async createGroup({ dispatch }, payload) {
+    async createGroupAction({ dispatch }, payload) {
       await addDoc(collection(getFirestore(), 'groups'), {
         name: payload.groupName,
         users: [payload.userUID],
@@ -71,13 +73,19 @@ export default {
         movies: [],
         created_by: payload.userDisplayName,
       });
-      dispatch('getGroups', { userUID: payload.userUID });
+      dispatch('getGroupsAction', { userUID: payload.userUID });
     },
-    async joinGroup({ dispatch }, payload) {
+    async joinGroupAction({ dispatch }, payload) {
       await updateDoc(doc(getFirestore(), 'groups', payload.groupCode), {
         users: arrayUnion(payload.userUID),
       });
-      dispatch('getGroups', { userUID: payload.userUID });
+      dispatch('getGroupsAction', { userUID: payload.userUID });
+    },
+    async leaveGroupAction({ dispatch }, payload) {
+      await updateDoc(doc(getFirestore(), 'groups', payload.groupCode), {
+        users: arrayRemove(payload.userUID),
+      });
+      dispatch('getGroupsAction', { userUID: payload.userUID });
     },
   },
   namespaced: true,
