@@ -36,11 +36,13 @@
         </b-table-column>
 
         <b-table-column v-slot="props">
-          <b-button
-            @click.prevent="leaveGroup($event, props.row.code)"
-            icon-left="delete"
-            size="is-small"
-          />
+          <b-tooltip label="Leave group" >
+            <b-button
+              @click.prevent="leaveGroup($event, props.row.code)"
+              icon-left="delete"
+              size="is-small"
+            />
+          </b-tooltip>
         </b-table-column>
       </b-table>
 
