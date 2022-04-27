@@ -12,6 +12,9 @@ export default {
     isLoggedIn(state) {
       return !!state.user;
     },
+    user(state) {
+      return state.user;
+    },
   },
   mutations: {
     setUser(state, payload) {
@@ -21,10 +24,12 @@ export default {
   actions: {
     signUpAction({ commit }, payload) {
       createUserWithEmailAndPassword(getAuth(), payload.email, payload.password)
-        .then((userCredential) => {
-          updateProfile(userCredential.user, {
-            displayName: this.name,
+        .then(async (userCredential) => {
+          // let auth = getAuth();
+          await updateProfile(userCredential.user, {
+            displayName: payload.name,
           });
+          // auth = getAuth();
           commit('setUser', userCredential.user);
           router.push('/');
         }).catch((err) => {

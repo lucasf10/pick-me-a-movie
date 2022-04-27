@@ -8,7 +8,7 @@
         hoverable
         :paginated="groups && Object.values(groups).length > 5"
         per-page="5"
-        :data="Object.values(groups)"
+        :data="groupList"
         :columns="columns"
         @click="selectMovie($event.code)"
       >
@@ -97,21 +97,46 @@ export default {
   },
   computed: {
     ...mapGetters('groups', ['groups']),
-    ...mapGetters('user', ['isLoggedIn']),
+    ...mapGetters('user', ['isLoggedIn', 'user']),
     groupList() {
-      return this.groups.map();
+      return Object.entries(this.groups).map((group) => {
+        // eslint-disable-next-line max-len
+        const dateFormat = new Date(group[1].created_at.seconds * 1000 + group[1].created_at.nanoseconds / 100000).toDateString();
+        return {
+          name: group[1].name,
+          created_by: group[1].created_by,
+          code: group[0],
+          created_at: dateFormat,
+          n_movies: group[1].movies.length || 0,
+        };
+      });
     },
   },
   methods: {
-    ...mapActions('groups', ['getGroups']),
+    ...mapActions('groups', ['getGroups', 'createGroup', 'joinGroup']),
     selectMovie(movieCode) {
       console.log('movieCode', movieCode);
     },
     onJoinGroup() {
-      console.log('onJoinGroup', this.$refs.joinGroupModal.$data.value);
+      const groupCode = this.$refs.joinGroupModal.$data.value;
+      if (groupCode && groupCode !== '') {
+        this.joinGroup({
+          groupCode,
+          userUID: this.user.uid,
+        });
+      }
+      this.showJoinGroupModal = false;
     },
     onCreateGroup() {
-      console.log('onCreateGroup', this.$refs.createGroupModal.$data.value);
+      const groupName = this.$refs.createGroupModal.$data.value;
+      if (groupName && groupName !== '') {
+        this.createGroup({
+          groupName,
+          userUID: this.user.uid,
+          userDisplayName: this.user.displayName,
+        });
+      }
+      this.showCreateGroupModal = false;
     },
   },
 };

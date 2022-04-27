@@ -86,7 +86,7 @@ export default {
   methods: {
     ...mapActions('user', ['signUpAction']),
     signUp() {
-      this.signUpAction({ email: this.email, password: this.password });
+      this.signUpAction({ email: this.email, password: this.password, name: this.name });
     },
   },
 };

@@ -11,6 +11,7 @@
             type="text"
             :placeholder="placeholder"
             required
+            ref="input"
           />
         </b-field>
       </section>
@@ -33,6 +34,9 @@ export default {
     title: String,
     buttonLabel: String,
     placeholder: String,
+  },
+  mounted() {
+    this.$refs.input.focus();
   },
   data() {
     return {
