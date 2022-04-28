@@ -1,26 +1,34 @@
 <template>
-  <div class="group-action-modal">
+  <div class="add-movie-modal">
     <div class="modal-card m-auto">
       <form @submit.prevent="$emit('submit');">
         <header class="modal-card-head">
-          <p class="modal-card-title">{{ title }}</p>
+          <p class="modal-card-title">Add Movie</p>
         </header>
         <section class="modal-card-body">
           <b-field>
             <b-input
-              v-model="value"
+              v-model="name"
               type="text"
-              :placeholder="placeholder"
-              ref="input"
+              placeholder="Name"
+              ref="nameInput"
+            />
+          </b-field>
+
+          <b-field>
+            <b-input
+              v-model="genre"
+              type="text"
+              placeholder="Genre"
             />
           </b-field>
         </section>
         <footer class="modal-card-foot is-flex is-justify-content-center">
           <b-button
             native-type="submit"
-            :label="buttonLabel"
+            label="Add"
             type="is-primary"
-            :disabled="!value"
+            :disabled="!name || !genre"
           />
         </footer>
       </form>
@@ -31,25 +39,26 @@
 <script>
 
 export default {
-  name: 'GroupActionModal',
+  name: 'AddMovieModal',
   props: {
     title: String,
     buttonLabel: String,
     placeholder: String,
   },
   mounted() {
-    this.$refs.input.focus();
+    this.$refs.nameInput.focus();
   },
   data() {
     return {
-      value: '',
+      name: '',
+      genre: '',
     };
   },
 };
 </script>
 
 <style lang="sass">
-  .group-action-modal
+  .add-movie-modal
     .modal-card
       width: 100%
 

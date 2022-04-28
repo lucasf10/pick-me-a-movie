@@ -5,6 +5,7 @@
         <h2 class="page-title mb-3">{{ this.group && this.group.name }}</h2>
         <b-table
           :data="formattedMovies"
+          class="mb-4"
           checkable
           checkbox-position="left"
           checkbox-type="is-primary"
@@ -30,6 +31,10 @@
             {{ props.row.userRating || '-' }}
           </b-table-column>
 
+          <b-table-column field="createdBy" label="Added By" centered v-slot="props">
+            {{ props.row.createdBy }}
+          </b-table-column>
+
           <b-table-column v-slot="props">
             <div class="actions">
               <b-tooltip
@@ -45,13 +50,26 @@
             </div>
           </b-table-column>
         </b-table>
+
+        <div class="box-footer">
+          <b-button @click="showPickMovieModal = true">Pick me a movie</b-button>
+          <b-button @click="showAddMovieModal = true">Add a movie</b-button>
+        </div>
       </div>
+
+      <b-modal v-model="showAddMovieModal" width="500px">
+        <add-movie-modal
+          ref="addMovieModal"
+          @submit="onAddMovie"
+        />
+      </b-modal>
   </section>
 </template>
 
 <script>
 import { mapActions, mapGetters } from 'vuex';
 import TopHeader from '../components/TopHeader.vue';
+import AddMovieModal from '../components/AddMovieModal.vue';
 
 export default {
   name: 'MoviesView',
@@ -61,6 +79,8 @@ export default {
   data() {
     return {
       group: null,
+      showAddMovieModal: false,
+      showPickMovieModal: false,
     };
   },
   beforeMount() {
@@ -68,17 +88,30 @@ export default {
   },
   components: {
     'top-header': TopHeader,
+    'add-movie-modal': AddMovieModal,
   },
   computed: {
-    ...mapGetters('user', ['isLoggedIn']),
+    ...mapGetters('user', ['isLoggedIn', 'user']),
     ...mapGetters('groups', ['groups']),
     ...mapGetters('movies', ['formattedMovies']),
   },
   methods: {
-    ...mapActions('movies', ['getMoviesAction', 'removeMovieAction']),
+    ...mapActions('movies', ['getMoviesAction', 'removeMovieAction', 'addMovieAction']),
     removeMovie(event, movieId) {
       event.stopPropagation();
       this.removeMovieAction({ movieId, groupId: this.$route.params.id });
+    },
+    onAddMovie() {
+      const { name, genre } = this.$refs.addMovieModal.$data;
+      if (name && genre && name !== '' && genre !== '') {
+        this.addMovieAction({
+          name,
+          genre,
+          userDisplayName: this.user.displayName,
+          groupId: this.$route.params.id,
+        });
+      }
+      this.showAddMovieModal = false;
     },
   },
 };
@@ -86,9 +119,21 @@ export default {
 
 <style lang="sass">
   .movies-page
+    .button
+      transition: 0.3s
+      &:hover
+        border-color: rgb(142, 45, 226)
+        background-color: rgba(142, 45, 226, 0.1)
+
+    .box-footer
+      display: flex
+      gap: 15px
+      justify-content: center
+
     thead
       label.b-checkbox.checkbox
         display: none
+
     tbody
       tr
         &.is-checked

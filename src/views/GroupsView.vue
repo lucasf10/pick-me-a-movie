@@ -198,7 +198,4 @@ export default {
         display: flex
         gap: 8px
 
-    .modal-card
-      width: 100%
-
 </style>

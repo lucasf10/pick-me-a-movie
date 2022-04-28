@@ -1,5 +1,6 @@
 import {
-  getDocs, getFirestore, query, collection, where, doc, deleteDoc, updateDoc, arrayRemove,
+  getDocs, getFirestore, query, collection, where, doc, deleteDoc,
+  updateDoc, arrayRemove, addDoc, arrayUnion,
 } from 'firebase/firestore';
 
 const initialState = () => ({ movies: {} });
@@ -16,6 +17,7 @@ export default {
         genre: movie[1].genre,
         avgRating: movie[1].avg_rating,
         userRating: movie[1].ratings?.[rootState.user.user.uid],
+        createdBy: movie[1].created_by,
         movieId: movie[0],
       }));
     },
@@ -43,6 +45,22 @@ export default {
       await deleteDoc(movieRef);
       await updateDoc(doc(getFirestore(), 'groups', payload.groupId), {
         movies: arrayRemove(movieRef),
+      });
+      dispatch('getMoviesAction', { groupId: payload.groupId });
+    },
+    async addMovieAction({ dispatch }, payload) {
+      const groupRef = doc(getFirestore(), 'groups', payload.groupId);
+      const docRef = await addDoc(collection(getFirestore(), 'movies'), {
+        name: payload.name,
+        genre: payload.genre,
+        group: groupRef,
+        created_by: payload.userDisplayName,
+        watched: false,
+        ratings: [],
+      });
+      console.log(docRef);
+      await updateDoc(groupRef, {
+        movies: arrayUnion(docRef),
       });
       dispatch('getMoviesAction', { groupId: payload.groupId });
     },
