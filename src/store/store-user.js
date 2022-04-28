@@ -25,11 +25,9 @@ export default {
     signUpAction({ commit }, payload) {
       createUserWithEmailAndPassword(getAuth(), payload.email, payload.password)
         .then(async (userCredential) => {
-          // let auth = getAuth();
           await updateProfile(userCredential.user, {
             displayName: payload.name,
           });
-          // auth = getAuth();
           commit('setUser', userCredential.user);
           router.push('/');
         }).catch((err) => {
@@ -48,7 +46,7 @@ export default {
     },
     logoutAction({ commit }) {
       sessionStorage.clear();
-      commit('setUser', null);
+      commit('setUser', initialState().user);
       router.push('/login');
     },
   },

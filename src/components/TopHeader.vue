@@ -11,7 +11,7 @@
     <app-logo />
     <div class="logout-button-wrapper">
       <b-button
-        @click=logoutAction
+        @click=logout
         icon-left="logout"
         size="is-medium"
       />
@@ -33,8 +33,15 @@ export default {
   },
   methods: {
     ...mapActions('user', ['logoutAction']),
+    ...mapActions('groups', ['clearGroupsAction']),
+    ...mapActions('movies', ['clearMoviesAction']),
     goBack() {
       this.$router.back();
+    },
+    logout() {
+      this.logoutAction();
+      this.clearGroupsAction();
+      this.clearMoviesAction();
     },
   },
 };
