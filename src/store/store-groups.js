@@ -12,6 +12,20 @@ export default {
     groups(state) {
       return state.groups;
     },
+    formattedGroups(state) {
+      return Object.entries(state.groups).map((group) => {
+        const dateFormat = new Date(
+          group[1].created_at.seconds * 1000 + group[1].created_at.nanoseconds / 100000,
+        ).toDateString();
+        return {
+          name: group[1].name,
+          created_by: group[1].created_by,
+          code: group[0],
+          created_at: dateFormat,
+          n_movies: group[1].movies.length || 0,
+        };
+      });
+    },
   },
   mutations: {
     setGroups(state, payload) {
