@@ -6,7 +6,7 @@
       <b-table
         class="mb-4"
         hoverable
-        :paginated="groups && Object.values(groups).length > 5"
+        :paginated="formattedGroups && formattedGroups.length > 5"
         per-page="5"
         :data="formattedGroups"
         @click="enterGroup($event.code)"
@@ -113,12 +113,12 @@ export default {
     };
   },
   computed: {
-    ...mapGetters('groups', ['groups', 'formattedGroups']),
+    ...mapGetters('groups', ['formattedGroups']),
     ...mapGetters('user', ['isLoggedIn', 'user']),
   },
   methods: {
     ...mapActions('groups', ['getGroupsAction', 'createGroupAction', 'joinGroupAction', 'leaveGroupAction']),
-    ...mapActions('movies', ['getMovies']),
+    ...mapActions('movies', ['getMoviesAction']),
     onJoinGroup() {
       const groupCode = this.$refs.joinGroupModal.$data.value;
       if (groupCode && groupCode !== '') {
@@ -149,7 +149,7 @@ export default {
       navigator.clipboard.writeText(groupCode);
     },
     enterGroup(groupCode) {
-      this.getMovies({ groupId: groupCode });
+      this.getMoviesAction({ groupId: groupCode });
       this.$router.push(`/group/${groupCode}`);
     },
   },

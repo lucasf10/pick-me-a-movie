@@ -1,10 +1,23 @@
+import {
+  getDocs, getFirestore, query, collection, where, doc, deleteDoc, updateDoc, arrayRemove,
+} from 'firebase/firestore';
+
 const initialState = () => ({ movies: {} });
 
 export default {
   state: initialState(),
   getters: {
     movies(state) {
-      return state.groups;
+      return state.movies;
+    },
+    formattedMovies(state, _, rootState) {
+      return Object.entries(state.movies).map((movie) => ({
+        name: movie[1].name,
+        genre: movie[1].genre,
+        avgRating: movie[1].avg_rating,
+        userRating: movie[1].ratings?.[rootState.user.user.uid],
+        movieId: movie[0],
+      }));
     },
   },
   mutations: {
@@ -13,6 +26,26 @@ export default {
     },
   },
   actions: {
+    async getMoviesAction({ commit }, payload) {
+      const movies = {};
+      const groupRef = doc(getFirestore(), 'groups', payload.groupId);
+      const snapshots = await getDocs(query(
+        collection(getFirestore(), 'movies'),
+        where('group', '==', groupRef),
+      ));
+      snapshots.forEach((snap) => {
+        movies[snap.id] = snap.data();
+      });
+      commit('setMovies', movies);
+    },
+    async removeMovieAction({ dispatch }, payload) {
+      const movieRef = doc(getFirestore(), 'movies', payload.movieId);
+      await deleteDoc(movieRef);
+      await updateDoc(doc(getFirestore(), 'groups', payload.groupId), {
+        movies: arrayRemove(movieRef),
+      });
+      dispatch('getMoviesAction', { groupId: payload.groupId });
+    },
     clearMoviesAction({ commit }) {
       commit('setMovies', initialState().movies);
     },
