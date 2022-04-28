@@ -27,6 +27,7 @@ export default {
   name: 'TopHeader',
   props: {
     backButton: Boolean,
+    shouldClearMoviesOnBack: Boolean,
   },
   components: {
     'app-logo': Logo,
@@ -37,6 +38,7 @@ export default {
     ...mapActions('movies', ['clearMoviesAction']),
     goBack() {
       this.$router.back();
+      if (this.shouldClearMoviesOnBack) this.clearMoviesAction();
     },
     logout() {
       this.logoutAction();
