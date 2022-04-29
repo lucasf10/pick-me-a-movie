@@ -1,6 +1,7 @@
 <template>
-  <section class="movies-page">
+  <section>
     <top-header backButton shouldClearMoviesOnBack />
+    <div class="movies-page">
       <div class="box mt-4 mx-4">
         <h2 class="page-title mb-3">{{ this.group && this.group.name }}</h2>
         <b-table
@@ -16,14 +17,28 @@
         >
 
           <template #empty>
-            <div class="has-text-centered" v-if="!loading">No movies yet.</div>
+            <div class="has-text-centered my-2" v-if="!loading">
+              No movies yet.
+            </div>
           </template>
 
-          <b-table-column field="name" label="Name" centered searchable v-slot="props">
+          <b-table-column
+            field="name"
+            label="Name"
+            centered
+            :searchable="!isListEmpty"
+            v-slot="props"
+          >
             {{ props.row.name }}
           </b-table-column>
 
-          <b-table-column field="genre" label="Genre" centered searchable v-slot="props">
+          <b-table-column
+            field="genre"
+            label="Genre"
+            centered
+            :searchable="!isListEmpty"
+            v-slot="props"
+          >
             {{ props.row.genre }}
           </b-table-column>
 
@@ -50,7 +65,13 @@
             </b-field>
           </b-table-column>
 
-          <b-table-column searchable field="createdBy" label="Added By" centered v-slot="props">
+          <b-table-column
+            :searchable="!isListEmpty"
+            field="createdBy"
+            label="Added By"
+            centered
+            v-slot="props"
+          >
             {{ props.row.createdBy }}
           </b-table-column>
 
@@ -73,8 +94,7 @@
         <div class="box-footer">
           <b-button
             @click="showPickMovieModal = true"
-            :disabled=
-              "!$refs.table || !$refs.table.visibleData || $refs.table.visibleData.length === 0"
+            :disabled="isListEmpty"
           >Pick me a movie</b-button>
           <b-button @click="showAddMovieModal = true">Add a movie</b-button>
         </div>
@@ -94,6 +114,7 @@
           :drawableData="$refs.table && $refs.table.visibleData"
         />
       </b-modal>
+    </div>
   </section>
 </template>
 
@@ -131,6 +152,9 @@ export default {
     watchedMovies() {
       return this.formattedMovies.filter((movie) => movie.watched);
     },
+    isListEmpty() {
+      return this.formattedMovies && this.formattedMovies.length === 0;
+    },
   },
   methods: {
     ...mapActions('movies', ['getMoviesAction', 'removeMovieAction', 'addMovieAction', 'updateMovieAction', 'rateMovieAction']),
@@ -151,15 +175,16 @@ export default {
       this.showAddMovieModal = false;
     },
     onCheckRow(checkedList, row) {
-      this.updateMovieAction({
-        movieId: row.movieId,
-        field: 'watched',
-        value: checkedList.indexOf(row) > -1,
-        groupId: this.$route.params.id,
-      });
+      // this.updateMovieAction({
+      //   movieId: row.movieId,
+      //   field: 'watched',
+      //   value: checkedList.indexOf(row) > -1,
+      //   groupId: this.$route.params.id,
+      // });
+      console.log(checkedList, row);
+      console.log(this.isListEmpty);
     },
     rateMovie(event, movieId) {
-      console.log(this.$refs.table.visibleData);
       event.preventDefault();
       this.rateMovieAction({
         movieId,
@@ -184,36 +209,43 @@ export default {
       gap: 15px
       justify-content: center
 
-    .table
-      .field
-        position: absolute
-        width: 100%
-        height: 100%
-        top: 0
-        display: flex
-        align-items: center
-        justify-content: center
-        opacity: 0
+    .table-wrapper
+      overflow-x: initial
 
-        select
-          position: relative
-          left: -10px
-          cursor: pointer
+      .table
+        .field
+          position: absolute
+          width: 100%
+          height: 100%
+          top: 0
+          display: flex
+          align-items: center
+          justify-content: center
+          opacity: 0
 
-      thead
-        label.b-checkbox.checkbox
-          display: none
-
-      tbody
-        tr
-          &.is-checked
-            td:not(:first-child):not(:last-child)
-                background: repeating-linear-gradient(180deg, #7957d5 0%, #7957d5 100%)
-                background-size: 100% 2px
-                background-position: center
-                background-repeat: no-repeat
-
-          td
-            vertical-align: middle
+          select
             position: relative
+            left: -10px
+            cursor: pointer
+
+        thead
+          label.b-checkbox.checkbox
+            display: none
+
+          input
+            height: 2.014em
+            font-size: 0.9rem
+
+        tbody
+          tr
+            &.is-checked
+              td:not(:first-child):not(:last-child)
+                  background: repeating-linear-gradient(180deg, #7957d5 0%, #7957d5 100%)
+                  background-size: 100% 2px
+                  background-position: center
+                  background-repeat: no-repeat
+
+            td
+              vertical-align: middle
+              position: relative
 </style>

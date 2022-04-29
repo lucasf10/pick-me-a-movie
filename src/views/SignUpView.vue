@@ -6,6 +6,7 @@
         <form @submit.prevent="signUp">
           <b-field>
               <b-input
+                ref="nameInput"
                 placeholder="Nome"
                 v-model="name"
                 type="text"
@@ -38,19 +39,28 @@
             </b-input>
           </b-field>
 
-          <b-field>
+          <b-field
+            :type="passwordsNotMatching ? 'is-danger' : 'no-danger'"
+            :message="passwordsNotMatching ? 'Passwords must match' : undefined"
+          >
             <b-input
               placeholder="********"
               v-model="confirmPassword"
               type="password"
               icon="lock-alert"
               required
-              password-reveal
             >
             </b-input>
           </b-field>
 
-          <b-button native-type="submit" class="mt-2 mb-4">Sign Up</b-button>
+          <b-button
+            native-type="submit"
+            class="mt-2 mb-4"
+            :loading="loading"
+            :disabled="!isFormValid"
+          >
+            Sign Up
+          </b-button>
         </form>
         <div class="switch-form">
           <p>Already have an account? <router-link to="/login">Sign in!</router-link></p>
@@ -72,6 +82,7 @@ export default {
       email: '',
       password: '',
       confirmPassword: '',
+      passwordsNotMatching: false,
     };
   },
   components: {
@@ -80,8 +91,26 @@ export default {
   beforeMount() {
     if (this.isLoggedIn) this.$router.push('/');
   },
+  mounted() {
+    this.$refs.nameInput.focus();
+  },
   computed: {
-    ...mapGetters('user', ['isLoggedIn']),
+    ...mapGetters('user', ['isLoggedIn', 'loading']),
+    isFormValid() {
+      return (
+        this.name
+        && this.email
+        && this.password
+        && this.confirmPassword
+        && this.password === this.confirmPassword
+      );
+    },
+  },
+  watch: {
+    confirmPassword(newValue) {
+      if (newValue !== this.password) this.passwordsNotMatching = true;
+      else this.passwordsNotMatching = false;
+    },
   },
   methods: {
     ...mapActions('user', ['signUpAction']),

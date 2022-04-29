@@ -1,92 +1,95 @@
 <template>
-  <div class="groups-page">
+  <section>
     <top-header />
-    <div class="box mt-4 mx-4">
-      <h2 class="page-title mb-3">Groups</h2>
-      <b-table
-        class="mb-4"
-        hoverable
-        :paginated="formattedGroups && formattedGroups.length > 5"
-        per-page="5"
-        :data="formattedGroups"
-        @click="enterGroup($event.code)"
-      >
-        <template #empty>
-          <div class="has-text-centered">No groups yet.</div>
-        </template>
+    <div class="groups-page">
+      <div class="box mt-4 mx-4">
+        <h2 class="page-title mb-3">Groups</h2>
+        <b-table
+          class="mb-4"
+          :loading="loading"
+          hoverable
+          :paginated="formattedGroups && formattedGroups.length > 5"
+          per-page="5"
+          :data="formattedGroups"
+          @click="enterGroup($event.code)"
+        >
+          <template #empty>
+            <div class="has-text-centered">No groups yet.</div>
+          </template>
 
-        <b-table-column field="name" label="Name" centered v-slot="props">
-          {{ props.row.name }}
-        </b-table-column>
+          <b-table-column field="name" label="Name" centered v-slot="props">
+            {{ props.row.name }}
+          </b-table-column>
 
-        <b-table-column field="first_name" label="By" centered v-slot="props">
-          {{ props.row.created_by }}
-        </b-table-column>
+          <b-table-column field="first_name" label="By" centered v-slot="props">
+            {{ props.row.created_by }}
+          </b-table-column>
 
-        <b-table-column field="at" label="At" centered v-slot="props">
-          {{ props.row.created_at }}
-        </b-table-column>
+          <b-table-column field="at" label="At" centered v-slot="props">
+            {{ props.row.created_at }}
+          </b-table-column>
 
-        <b-table-column field="n_movies" label="# Movies" centered v-slot="props">
-          {{ props.row.n_movies }}
-        </b-table-column>
+          <b-table-column field="n_movies" label="# Movies" centered v-slot="props">
+            {{ props.row.n_movies }}
+          </b-table-column>
 
-        <b-table-column field="code" label="Code" centered v-slot="props">
-          {{ props.row.code }}
-        </b-table-column>
+          <b-table-column field="code" label="Code" centered v-slot="props">
+            {{ props.row.code }}
+          </b-table-column>
 
-        <b-table-column v-slot="props">
-          <div class="actions">
-            <b-tooltip
-              label="Leave group"
-              position="is-left"
-            >
-              <b-button
-                @click.prevent="leaveGroup($event, props.row.code)"
-                icon-left="delete"
-                size="is-small"
-              />
-            </b-tooltip>
-            <b-tooltip
-              label="Copy code"
-              position="is-left"
-            >
-              <b-button
-                @click.prevent="copyToClipboard($event, props.row.code)"
-                icon-left="content-copy"
-                size="is-small"
-              />
-            </b-tooltip>
-          </div>
-        </b-table-column>
-      </b-table>
+          <b-table-column v-slot="props">
+            <div class="actions">
+              <b-tooltip
+                label="Leave group"
+                position="is-left"
+              >
+                <b-button
+                  @click.prevent="leaveGroup($event, props.row.code)"
+                  icon-left="delete"
+                  size="is-small"
+                />
+              </b-tooltip>
+              <b-tooltip
+                label="Copy code"
+                position="is-left"
+              >
+                <b-button
+                  @click.prevent="copyToClipboard($event, props.row.code)"
+                  icon-left="content-copy"
+                  size="is-small"
+                />
+              </b-tooltip>
+            </div>
+          </b-table-column>
+        </b-table>
 
-      <div class="box-footer">
-        <b-button @click="showJoinGroupModal = true">Join a group</b-button>
-        <b-button @click="showCreateGroupModal = true">Create a group</b-button>
+        <div class="box-footer">
+          <b-button @click="showJoinGroupModal = true">Join a group</b-button>
+          <b-button @click="showCreateGroupModal = true">Create a group</b-button>
+        </div>
       </div>
+
+      <b-modal v-model="showJoinGroupModal" width="500px">
+        <group-action-modal
+          ref="joinGroupModal"
+          title="Join Group"
+          placeholder="Group code"
+          buttonLabel="Join"
+          @submit="onJoinGroup"
+        />
+      </b-modal>
+
+      <b-modal v-model="showCreateGroupModal" width="500px">
+        <group-action-modal
+          ref="createGroupModal"
+          title="Create Group"
+          placeholder="Group name"
+          buttonLabel="Create"
+          @submit="onCreateGroup"
+        />
+      </b-modal>
     </div>
-
-    <b-modal v-model="showJoinGroupModal" width="500px">
-      <group-action-modal
-        ref="joinGroupModal"
-        title="Join Group"
-        placeholder="Group code"
-        buttonLabel="Join"
-        @submit="onJoinGroup"
-      />
-    </b-modal>
-
-    <b-modal v-model="showCreateGroupModal" width="500px">
-      <group-action-modal
-        ref="createGroupModal"
-        title="Create Group"
-        placeholder="Group name"
-        buttonLabel="Create"
-        @submit="onCreateGroup"
-      />
-    </b-modal>
-  </div>
+  </section>
 </template>
 
 <script>
@@ -113,7 +116,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters('groups', ['formattedGroups']),
+    ...mapGetters('groups', ['formattedGroups', 'loading']),
     ...mapGetters('user', ['isLoggedIn', 'user']),
   },
   methods: {
@@ -177,6 +180,10 @@ export default {
             &:not(.is-selected):hover
               background-color: rgba(142, 45, 226, 0.1)
               cursor: pointer
+
+            td
+              vertical-align: middle
+              position: relative
 
       .pagination
         padding: 5px

@@ -6,6 +6,7 @@
         <form @submit.prevent="login()">
           <b-field>
               <b-input
+                ref="emailInput"
                 required
                 placeholder="Email"
                 v-model="email"
@@ -27,7 +28,14 @@
             </b-input>
           </b-field>
 
-          <b-button native-type="submit" class="mt-2 mb-4">Login</b-button>
+          <b-button
+            native-type="submit"
+            class="mt-2 mb-4"
+            :loading="loading"
+            :disabled="!email || !password || $refs.emailInput.hasMessage"
+          >
+            Login
+          </b-button>
         </form>
         <div class="switch-form">
           <p>Don't have an account? <router-link to="/signup">Sign up!</router-link></p>
@@ -52,11 +60,14 @@ export default {
   beforeMount() {
     if (this.isLoggedIn) this.$router.push('/');
   },
+  mounted() {
+    this.$refs.emailInput.focus();
+  },
   components: {
     'app-logo': Logo,
   },
   computed: {
-    ...mapGetters('user', ['isLoggedIn']),
+    ...mapGetters('user', ['isLoggedIn', 'loading']),
   },
   methods: {
     ...mapActions('user', ['loginAction']),

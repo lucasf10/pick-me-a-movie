@@ -4,7 +4,7 @@ import {
   arrayRemove,
 } from 'firebase/firestore';
 
-const initialState = () => ({ groups: {} });
+const initialState = () => ({ groups: {}, loading: false });
 
 export default {
   state: initialState(),
@@ -26,14 +26,21 @@ export default {
         };
       });
     },
+    loading(state) {
+      return state.loading;
+    },
   },
   mutations: {
     setGroups(state, payload) {
       state.groups = payload;
     },
+    setLoading(state, payload) {
+      state.loading = payload;
+    },
   },
   actions: {
     async getGroupsAction({ commit }, payload) {
+      commit('setLoading', true);
       const snapshots = await getDocs(query(
         collection(getFirestore(), 'groups'),
         where('users', 'array-contains', payload.userUID),
@@ -43,6 +50,7 @@ export default {
         groups[snap.id] = snap.data();
       });
       commit('setGroups', groups);
+      commit('setLoading', false);
     },
     async createGroupAction({ dispatch }, payload) {
       await addDoc(collection(getFirestore(), 'groups'), {
