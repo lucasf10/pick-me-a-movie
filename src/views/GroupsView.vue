@@ -11,7 +11,7 @@
           :paginated="formattedGroups && formattedGroups.length > 5"
           per-page="5"
           :data="formattedGroups"
-          @click="enterGroup($event.code)"
+          @click="$router.push(`/group/${groupCode}`);"
         >
           <template #empty>
             <div class="has-text-centered">No groups yet.</div>
@@ -150,10 +150,6 @@ export default {
     copyToClipboard(event, groupCode) {
       event.stopPropagation();
       navigator.clipboard.writeText(groupCode);
-    },
-    enterGroup(groupCode) {
-      this.getMoviesAction({ groupId: groupCode });
-      this.$router.push(`/group/${groupCode}`);
     },
   },
 };

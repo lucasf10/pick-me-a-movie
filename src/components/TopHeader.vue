@@ -37,7 +37,7 @@ export default {
     ...mapActions('groups', ['clearGroupsAction']),
     ...mapActions('movies', ['clearMoviesAction']),
     goBack() {
-      this.$router.back();
+      this.$router.push('/');
       if (this.shouldClearMoviesOnBack) this.clearMoviesAction();
     },
     logout() {

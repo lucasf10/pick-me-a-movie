@@ -127,6 +127,7 @@ import PickMovieModal from '../components/PickMovieModal.vue';
 export default {
   name: 'MoviesView',
   mounted() {
+    this.getMoviesAction({ groupId: this.$route.params.id });
     this.group = this.groups && this.groups[this.$route.params.id];
   },
   data() {
@@ -175,14 +176,12 @@ export default {
       this.showAddMovieModal = false;
     },
     onCheckRow(checkedList, row) {
-      // this.updateMovieAction({
-      //   movieId: row.movieId,
-      //   field: 'watched',
-      //   value: checkedList.indexOf(row) > -1,
-      //   groupId: this.$route.params.id,
-      // });
-      console.log(checkedList, row);
-      console.log(this.isListEmpty);
+      this.updateMovieAction({
+        movieId: row.movieId,
+        field: 'watched',
+        value: checkedList.indexOf(row) > -1,
+        groupId: this.$route.params.id,
+      });
     },
     rateMovie(event, movieId) {
       event.preventDefault();
