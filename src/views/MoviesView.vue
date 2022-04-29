@@ -4,6 +4,7 @@
       <div class="box mt-4 mx-4">
         <h2 class="page-title mb-3">{{ this.group && this.group.name }}</h2>
         <b-table
+          ref="table"
           :data="formattedMovies"
           :loading="loading"
           class="mb-4"
@@ -70,7 +71,11 @@
         </b-table>
 
         <div class="box-footer">
-          <b-button @click="showPickMovieModal = true">Pick me a movie</b-button>
+          <b-button
+            @click="showPickMovieModal = true"
+            :disabled=
+              "!$refs.table || !$refs.table.visibleData || $refs.table.visibleData.length === 0"
+          >Pick me a movie</b-button>
           <b-button @click="showAddMovieModal = true">Add a movie</b-button>
         </div>
       </div>
@@ -81,6 +86,14 @@
           @submit="onAddMovie"
         />
       </b-modal>
+
+      <b-modal v-model="showPickMovieModal" width="500px">
+        <pick-movie-modal
+          ref="pickMovieModal"
+          @close="showPickMovieModal = false"
+          :drawableData="$refs.table && $refs.table.visibleData"
+        />
+      </b-modal>
   </section>
 </template>
 
@@ -88,6 +101,7 @@
 import { mapActions, mapGetters } from 'vuex';
 import TopHeader from '../components/TopHeader.vue';
 import AddMovieModal from '../components/AddMovieModal.vue';
+import PickMovieModal from '../components/PickMovieModal.vue';
 
 export default {
   name: 'MoviesView',
@@ -108,6 +122,7 @@ export default {
   components: {
     'top-header': TopHeader,
     'add-movie-modal': AddMovieModal,
+    'pick-movie-modal': PickMovieModal,
   },
   computed: {
     ...mapGetters('user', ['isLoggedIn', 'user']),
@@ -144,6 +159,7 @@ export default {
       });
     },
     rateMovie(event, movieId) {
+      console.log(this.$refs.table.visibleData);
       event.preventDefault();
       this.rateMovieAction({
         movieId,
