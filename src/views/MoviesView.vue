@@ -30,23 +30,21 @@
           </b-table-column>
 
           <b-table-column field="userRating" label="Your Rating" centered v-slot="props">
-            <div
-              class="is-clickable"
-              v-if="!(showRatingSelect && showRatingSelect[props.row.movieId])"
-              @click="onRating($event, props.row.movieId)"
-              @keyDown="onRating($event, props.row.movieId)"
-            >
-              {{ props.row.userRating || '-' }}
+            <div>
+              {{ props.row.ratings && props.row.ratings[user.uid] || '-' }}
             </div>
-            <b-field v-else>
-              <b-select>
+            <b-field>
+              <select
+                @change="rateMovie($event, props.row.movieId)"
+              >
                   <option
                     v-for="i in 10"
+                    :selected="props.row.ratings && i === props.row.ratings[user.uid]"
                     :value="i"
                     :key="i">
                     {{ i }}
                   </option>
-              </b-select>
+              </select>
             </b-field>
           </b-table-column>
 
@@ -119,7 +117,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions('movies', ['getMoviesAction', 'removeMovieAction', 'addMovieAction', 'updateMovieAction']),
+    ...mapActions('movies', ['getMoviesAction', 'removeMovieAction', 'addMovieAction', 'updateMovieAction', 'rateMovieAction']),
     removeMovie(event, movieId) {
       event.stopPropagation();
       this.removeMovieAction({ movieId, groupId: this.$route.params.id });
@@ -141,15 +139,16 @@ export default {
         movieId: row.movieId,
         field: 'watched',
         value: checkedList.indexOf(row) > -1,
+        groupId: this.$route.params.id,
       });
     },
-    onRating(event, movieId) {
-      console.log(this.$refs.ratingSelect);
-      event.stopPropagation();
-      this.showRatingSelect = this.showRatingSelect || {};
-      console.log(this.showRatingSelect);
-      this.showRatingSelect[movieId] = true;
-      console.log(this.showRatingSelect);
+    rateMovie(event, movieId) {
+      event.preventDefault();
+      this.rateMovieAction({
+        movieId,
+        userId: this.user.uid,
+        rate: event.target.value,
+      });
     },
   },
 };
@@ -168,19 +167,36 @@ export default {
       gap: 15px
       justify-content: center
 
-    thead
-      label.b-checkbox.checkbox
-        display: none
+    .table
+      .field
+        position: absolute
+        width: 100%
+        height: 100%
+        top: 0
+        display: flex
+        align-items: center
+        justify-content: center
+        opacity: 0
 
-    tbody
-      tr
-        &.is-checked
-          td:not(:first-child):not(:last-child)
-              background: repeating-linear-gradient(180deg, #7957d5 0%, #7957d5 100%)
-              background-size: 100% 2px
-              background-position: center
-              background-repeat: no-repeat
+        select
+          position: relative
+          left: -10px
+          cursor: pointer
 
-        td
-          vertical-align: middle
+      thead
+        label.b-checkbox.checkbox
+          display: none
+
+      tbody
+        tr
+          &.is-checked
+            td:not(:first-child):not(:last-child)
+                background: repeating-linear-gradient(180deg, #7957d5 0%, #7957d5 100%)
+                background-size: 100% 2px
+                background-position: center
+                background-repeat: no-repeat
+
+          td
+            vertical-align: middle
+            position: relative
 </style>
