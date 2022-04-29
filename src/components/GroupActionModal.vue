@@ -50,6 +50,8 @@ export default {
 
 <style lang="sass">
   .group-action-modal
+    margin: 0 20px
+
     .modal-card
       width: 100%
 

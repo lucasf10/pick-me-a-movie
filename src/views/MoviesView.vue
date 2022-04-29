@@ -242,12 +242,25 @@ export default {
 
         tbody
           tr
+            .b-checkbox.checkbox:not(.button)
+              @media screen and (max-width: 768px)
+                margin-right: 0
+
+                .control-label
+                  display: none
+
             &.is-checked
-              td:not(:first-child):not(:last-child)
-                  background: repeating-linear-gradient(180deg, #7957d5 0%, #7957d5 100%)
-                  background-size: 100% 2px
-                  background-position: center
-                  background-repeat: no-repeat
+              td
+                &:not(:first-child):not(:last-child)
+                  @media screen and (min-width: 769px)
+                    background: repeating-linear-gradient(180deg, #7957d5 0%, #7957d5 100%)
+                    background-size: 100% 2px
+                    background-position: center
+                    background-repeat: no-repeat
+
+              @media screen and (max-width: 768px)
+                background-color: rgba(142, 45, 226, 0.1)
+                border: 1px solid rgb(142, 45, 226)
 
             td
               vertical-align: middle

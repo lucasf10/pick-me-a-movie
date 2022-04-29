@@ -56,6 +56,8 @@ export default {
 
 <style lang="sass">
   .pick-movie-modal
+    margin: 0 20px
+
     .modal-card
       width: 100%
 
