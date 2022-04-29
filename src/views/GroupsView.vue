@@ -11,7 +11,7 @@
           :paginated="formattedGroups && formattedGroups.length > 5"
           per-page="5"
           :data="formattedGroups"
-          @click="$router.push(`/group/${groupCode}`);"
+          @click="$router.push(`/group/${$event.code}`);"
         >
           <template #empty>
             <div class="has-text-centered">No groups yet.</div>

@@ -128,7 +128,6 @@ export default {
   name: 'MoviesView',
   mounted() {
     this.getMoviesAction({ groupId: this.$route.params.id });
-    this.group = this.groups && this.groups[this.$route.params.id];
   },
   data() {
     return {
@@ -140,6 +139,12 @@ export default {
   },
   beforeMount() {
     if (!this.isLoggedIn) this.$router.push('/login');
+    const group = this.groups && this.groups[this.$route.params.id];
+    if (!group) {
+      this.$router.push('/');
+    } else {
+      this.group = group;
+    }
   },
   components: {
     'top-header': TopHeader,
