@@ -9,6 +9,8 @@
           checkable
           checkbox-position="left"
           checkbox-type="is-primary"
+          :checked-rows="watchedMovies"
+          @check="onCheckRow"
         >
 
           <template #empty>
@@ -28,7 +30,24 @@
           </b-table-column>
 
           <b-table-column field="userRating" label="Your Rating" centered v-slot="props">
-            {{ props.row.userRating || '-' }}
+            <div
+              class="is-clickable"
+              v-if="!(showRatingSelect && showRatingSelect[props.row.movieId])"
+              @click="onRating($event, props.row.movieId)"
+              @keyDown="onRating($event, props.row.movieId)"
+            >
+              {{ props.row.userRating || '-' }}
+            </div>
+            <b-field v-else>
+              <b-select>
+                  <option
+                    v-for="i in 10"
+                    :value="i"
+                    :key="i">
+                    {{ i }}
+                  </option>
+              </b-select>
+            </b-field>
           </b-table-column>
 
           <b-table-column field="createdBy" label="Added By" centered v-slot="props">
@@ -81,6 +100,7 @@ export default {
       group: null,
       showAddMovieModal: false,
       showPickMovieModal: false,
+      showRatingSelect: null,
     };
   },
   beforeMount() {
@@ -94,9 +114,12 @@ export default {
     ...mapGetters('user', ['isLoggedIn', 'user']),
     ...mapGetters('groups', ['groups']),
     ...mapGetters('movies', ['formattedMovies']),
+    watchedMovies() {
+      return this.formattedMovies.filter((movie) => movie.watched);
+    },
   },
   methods: {
-    ...mapActions('movies', ['getMoviesAction', 'removeMovieAction', 'addMovieAction']),
+    ...mapActions('movies', ['getMoviesAction', 'removeMovieAction', 'addMovieAction', 'updateMovieAction']),
     removeMovie(event, movieId) {
       event.stopPropagation();
       this.removeMovieAction({ movieId, groupId: this.$route.params.id });
@@ -112,6 +135,21 @@ export default {
         });
       }
       this.showAddMovieModal = false;
+    },
+    onCheckRow(checkedList, row) {
+      this.updateMovieAction({
+        movieId: row.movieId,
+        field: 'watched',
+        value: checkedList.indexOf(row) > -1,
+      });
+    },
+    onRating(event, movieId) {
+      console.log(this.$refs.ratingSelect);
+      event.stopPropagation();
+      this.showRatingSelect = this.showRatingSelect || {};
+      console.log(this.showRatingSelect);
+      this.showRatingSelect[movieId] = true;
+      console.log(this.showRatingSelect);
     },
   },
 };

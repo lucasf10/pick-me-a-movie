@@ -18,6 +18,7 @@ export default {
         avgRating: movie[1].avg_rating,
         userRating: movie[1].ratings?.[rootState.user.user.uid],
         createdBy: movie[1].created_by,
+        watched: movie[1].watched,
         movieId: movie[0],
       }));
     },
@@ -58,11 +59,16 @@ export default {
         watched: false,
         ratings: [],
       });
-      console.log(docRef);
       await updateDoc(groupRef, {
         movies: arrayUnion(docRef),
       });
       dispatch('getMoviesAction', { groupId: payload.groupId });
+    },
+    async updateMovieAction(_, payload) {
+      const movieRef = doc(getFirestore(), 'movies', payload.movieId);
+      await updateDoc(movieRef, {
+        [payload.field]: payload.value,
+      });
     },
     clearMoviesAction({ commit }) {
       commit('setMovies', initialState().movies);

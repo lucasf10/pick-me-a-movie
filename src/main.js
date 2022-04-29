@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import { initializeApp } from 'firebase/app';
 import {
-  Input, Field, Icon, Button, Dialog, Table, Modal, Tooltip,
+  Input, Field, Icon, Button, Dialog, Table, Modal, Tooltip, Select,
 } from 'buefy';
 
 import App from './App.vue';
@@ -38,6 +38,7 @@ Vue.use(Dialog);
 Vue.use(Table);
 Vue.use(Modal);
 Vue.use(Tooltip);
+Vue.use(Select);
 
 // Vue instance
 
