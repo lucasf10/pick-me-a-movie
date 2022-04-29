@@ -4,7 +4,7 @@ import {
 } from 'firebase/firestore';
 import Vue from 'vue';
 
-const initialState = () => ({ movies: {} });
+const initialState = () => ({ movies: {}, loading: false });
 
 export default {
   state: initialState(),
@@ -29,6 +29,9 @@ export default {
         };
       });
     },
+    loading(state) {
+      return state.loading;
+    },
   },
   mutations: {
     setMovies(state, payload) {
@@ -46,9 +49,13 @@ export default {
         Vue.set(state.movies[movieId].ratings, userId, Number(rate));
       }
     },
+    setLoading(state, payload) {
+      state.loading = payload;
+    },
   },
   actions: {
     async getMoviesAction({ commit }, payload) {
+      await commit('setLoading', true);
       const movies = {};
       const groupRef = doc(getFirestore(), 'groups', payload.groupId);
       const snapshots = await getDocs(query(
@@ -58,12 +65,14 @@ export default {
       snapshots.forEach((snap) => {
         movies[snap.id] = snap.data();
       });
-      commit('setMovies', movies);
+      await commit('setMovies', movies);
+      await commit('setLoading', false);
     },
     async removeMovieAction({ dispatch }, payload) {
-      const movieRef = doc(getFirestore(), 'movies', payload.movieId);
+      const { movieId, groupId } = payload;
+      const movieRef = doc(getFirestore(), 'movies', movieId);
       await deleteDoc(movieRef);
-      await updateDoc(doc(getFirestore(), 'groups', payload.groupId), {
+      await updateDoc(doc(getFirestore(), 'groups', groupId), {
         movies: arrayRemove(movieRef),
       });
       dispatch('getMoviesAction', { groupId: payload.groupId });
@@ -83,17 +92,15 @@ export default {
       });
       dispatch('getMoviesAction', { groupId: payload.groupId });
     },
-    async updateMovieAction({ dispatch }, payload) {
+    async updateMovieAction(_, payload) {
       const movieRef = doc(getFirestore(), 'movies', payload.movieId);
       await updateDoc(movieRef, {
         [payload.field]: payload.value,
       });
-      dispatch('getMoviesAction', { groupId: payload.groupId });
     },
     async rateMovieAction({ commit }, payload) {
       const { movieId, userId, rate } = payload;
       const movieRef = doc(getFirestore(), 'movies', movieId);
-
       await commit('setMovieRate', { movieId, userId, rate: Number(rate) });
       await updateDoc(movieRef, { [`ratings.${userId}`]: Number(rate) });
     },

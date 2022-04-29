@@ -5,6 +5,7 @@
         <h2 class="page-title mb-3">{{ this.group && this.group.name }}</h2>
         <b-table
           :data="formattedMovies"
+          :loading="loading"
           class="mb-4"
           checkable
           checkbox-position="left"
@@ -14,14 +15,14 @@
         >
 
           <template #empty>
-            <div class="has-text-centered">No movies yet.</div>
+            <div class="has-text-centered" v-if="!loading">No movies yet.</div>
           </template>
 
-          <b-table-column field="name" label="Name" centered v-slot="props">
+          <b-table-column field="name" label="Name" centered searchable v-slot="props">
             {{ props.row.name }}
           </b-table-column>
 
-          <b-table-column field="genre" label="Genre" centered v-slot="props">
+          <b-table-column field="genre" label="Genre" centered searchable v-slot="props">
             {{ props.row.genre }}
           </b-table-column>
 
@@ -48,7 +49,7 @@
             </b-field>
           </b-table-column>
 
-          <b-table-column field="createdBy" label="Added By" centered v-slot="props">
+          <b-table-column searchable field="createdBy" label="Added By" centered v-slot="props">
             {{ props.row.createdBy }}
           </b-table-column>
 
@@ -111,7 +112,7 @@ export default {
   computed: {
     ...mapGetters('user', ['isLoggedIn', 'user']),
     ...mapGetters('groups', ['groups']),
-    ...mapGetters('movies', ['formattedMovies']),
+    ...mapGetters('movies', ['formattedMovies', 'loading']),
     watchedMovies() {
       return this.formattedMovies.filter((movie) => movie.watched);
     },
