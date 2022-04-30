@@ -4,11 +4,7 @@
     <div class="movies-page">
       <div class="box mt-4 mx-4">
         <h2 class="page-title mb-3">{{ this.group && this.group.name }}</h2>
-        <div class="filters only-mobile">
-          <!-- <input type="text" @change="($event, val) => fillRealFilterInput(val, 1)" /> -->
-          <!-- <input type="text" @change="() => " /> -->
-          <!-- <input type="text" @change="() => " /> -->
-        </div>
+        <mobile-movie-filter :onInput="fillRealFilterInput" />
         <b-table
           ref="table"
           :data="formattedMovies"
@@ -60,13 +56,13 @@
               <select
                 @change="rateMovie($event, props.row.movieId)"
               >
-                  <option
-                    v-for="i in 10"
-                    :selected="props.row.ratings && i === props.row.ratings[user.uid]"
-                    :value="i"
-                    :key="i">
-                    {{ i }}
-                  </option>
+                <option
+                  v-for="i in 10"
+                  :selected="props.row.ratings && i === props.row.ratings[user.uid]"
+                  :value="i"
+                  :key="i">
+                  {{ i }}
+                </option>
               </select>
             </b-field>
           </b-table-column>
@@ -117,6 +113,7 @@
         <pick-movie-modal
           ref="pickMovieModal"
           @close="showPickMovieModal = false"
+          :drawableMovie="($refs.table && $refs.table.visibleData) || []"
         />
       </b-modal>
     </div>
@@ -125,16 +122,16 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex';
+import { triggerEvent } from '../utils/functions';
 import TopHeader from '../components/TopHeader.vue';
 import AddMovieModal from '../components/AddMovieModal.vue';
 import PickMovieModal from '../components/PickMovieModal.vue';
+import MobileMovieFilter from '../components/MobileMovieFilter.vue';
 
 export default {
   name: 'MoviesView',
   mounted() {
     this.getMoviesAction({ groupId: this.$route.params.id });
-    // const inputElements = document.querySelectorAll('.control input');
-    // console.log(inputElements);
   },
   data() {
     return {
@@ -153,14 +150,11 @@ export default {
       this.group = group;
     }
   },
-  beforeUpdate() {
-    const inputElements = document.querySelectorAll('.control input');
-    console.log(inputElements);
-  },
   components: {
     'top-header': TopHeader,
     'add-movie-modal': AddMovieModal,
     'pick-movie-modal': PickMovieModal,
+    'mobile-movie-filter': MobileMovieFilter,
   },
   computed: {
     ...mapGetters('user', ['isLoggedIn', 'user']),
@@ -206,6 +200,11 @@ export default {
         userId: this.user.uid,
         rate: event.target.value,
       });
+    },
+    fillRealFilterInput(val, columnIndex) {
+      const inputElement = document.querySelectorAll('.table .control input')[columnIndex - 1];
+      inputElement.value = val;
+      triggerEvent(inputElement, 'input');
     },
   },
 };

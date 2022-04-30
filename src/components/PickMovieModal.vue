@@ -30,6 +30,9 @@ import { mapGetters } from 'vuex';
 
 export default {
   name: 'AddMovieModal',
+  props: {
+    drawableMovie: Array,
+  },
   mounted() {
     this.pickMovie();
   },
@@ -41,7 +44,7 @@ export default {
   computed: {
     ...mapGetters('movies', ['formattedMovies']),
     notWatchedMovies() {
-      return this.formattedMovies.filter((movie) => !movie.watched);
+      return this.drawableMovie.filter((movie) => !movie.watched);
     },
   },
   methods: {
