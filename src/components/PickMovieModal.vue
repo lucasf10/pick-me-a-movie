@@ -26,12 +26,10 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'AddMovieModal',
-  props: {
-    drawableData: Array,
-  },
   mounted() {
     this.pickMovie();
   },
@@ -40,14 +38,20 @@ export default {
       pickedMovie: null,
     };
   },
+  computed: {
+    ...mapGetters('movies', ['formattedMovies']),
+    notWatchedMovies() {
+      return this.formattedMovies.filter((movie) => !movie.watched);
+    },
+  },
   methods: {
     generateRandomInteger(min, max) {
       return Math.floor(min + Math.random() * (max + 1 - min));
     },
     pickMovie() {
-      if (this.drawableData && this.drawableData.length > 0) {
-        const randomIndex = this.generateRandomInteger(0, this.drawableData.length - 1);
-        this.pickedMovie = this.drawableData[randomIndex];
+      if (this.notWatchedMovies && this.notWatchedMovies.length > 0) {
+        const randomIndex = this.generateRandomInteger(0, this.notWatchedMovies.length - 1);
+        this.pickedMovie = this.notWatchedMovies[randomIndex];
       }
     },
   },

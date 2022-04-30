@@ -111,7 +111,6 @@
         <pick-movie-modal
           ref="pickMovieModal"
           @close="showPickMovieModal = false"
-          :drawableData="$refs.table && $refs.table.visibleData"
         />
       </b-modal>
     </div>

@@ -55,7 +55,7 @@ export default {
   },
   actions: {
     async getMoviesAction({ commit }, payload) {
-      await commit('setLoading', true);
+      if (!payload.preventLoading) await commit('setLoading', true);
       const movies = {};
       const groupRef = doc(getFirestore(), 'groups', payload.groupId);
       const snapshots = await getDocs(query(
@@ -66,7 +66,7 @@ export default {
         movies[snap.id] = snap.data();
       });
       await commit('setMovies', movies);
-      await commit('setLoading', false);
+      if (!payload.preventLoading) await commit('setLoading', false);
     },
     async removeMovieAction({ dispatch }, payload) {
       const { movieId, groupId } = payload;
@@ -92,11 +92,13 @@ export default {
       });
       dispatch('getMoviesAction', { groupId: payload.groupId });
     },
-    async updateMovieAction(_, payload) {
-      const movieRef = doc(getFirestore(), 'movies', payload.movieId);
+    async updateMovieAction({ commit }, payload) {
+      const { movieId, field, value } = payload;
+      const movieRef = doc(getFirestore(), 'movies', movieId);
       await updateDoc(movieRef, {
-        [payload.field]: payload.value,
+        [field]: value,
       });
+      commit('setField', { movieId, field, value });
     },
     async rateMovieAction({ commit }, payload) {
       const { movieId, userId, rate } = payload;
