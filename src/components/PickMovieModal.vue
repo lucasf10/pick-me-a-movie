@@ -3,7 +3,7 @@
     <div class="modal-card m-auto">
       <form>
         <header class="modal-card-head">
-          <p class="modal-card-title">Add Movie</p>
+          <p class="modal-card-title">Pick Movie</p>
         </header>
         <section class="modal-card-body">
           <div v-if="pickedMovie">
@@ -60,7 +60,7 @@ export default {
 
 <style lang="sass">
   .pick-movie-modal
-    margin: 0 20px
+    margin: 20px
 
     .modal-card
       width: 100%

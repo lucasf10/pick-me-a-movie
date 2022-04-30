@@ -59,7 +59,7 @@ export default {
 
 <style lang="sass">
   .add-movie-modal
-    margin: 0 20px
+    margin: 20px
 
     .modal-card
       width: 100%
