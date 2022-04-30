@@ -4,6 +4,11 @@
     <div class="movies-page">
       <div class="box mt-4 mx-4">
         <h2 class="page-title mb-3">{{ this.group && this.group.name }}</h2>
+        <div class="filters only-mobile">
+          <!-- <input type="text" @change="($event, val) => fillRealFilterInput(val, 1)" /> -->
+          <!-- <input type="text" @change="() => " /> -->
+          <!-- <input type="text" @change="() => " /> -->
+        </div>
         <b-table
           ref="table"
           :data="formattedMovies"
@@ -25,6 +30,7 @@
           <b-table-column
             field="name"
             label="Name"
+            header-class="name-column"
             centered
             :searchable="!isListEmpty"
             v-slot="props"
@@ -127,6 +133,8 @@ export default {
   name: 'MoviesView',
   mounted() {
     this.getMoviesAction({ groupId: this.$route.params.id });
+    // const inputElements = document.querySelectorAll('.control input');
+    // console.log(inputElements);
   },
   data() {
     return {
@@ -144,6 +152,10 @@ export default {
     } else {
       this.group = group;
     }
+  },
+  beforeUpdate() {
+    const inputElements = document.querySelectorAll('.control input');
+    console.log(inputElements);
   },
   components: {
     'top-header': TopHeader,
@@ -238,6 +250,10 @@ export default {
           input
             height: 2.014em
             font-size: 0.9rem
+
+          th
+            vertical-align: middle
+            position: relative
 
         tbody
           tr

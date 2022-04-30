@@ -170,6 +170,11 @@ export default {
 
     .b-table
       .table.is-hoverable
+        thead
+          th
+            vertical-align: middle
+            position: relative
+
         tbody
           tr
             transition: 0.3s
