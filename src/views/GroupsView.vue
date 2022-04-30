@@ -104,7 +104,7 @@ export default {
     'group-action-modal': GroupActionModal,
   },
   mounted() {
-    this.getGroupsAction({ userUID: this.user.uid });
+    if (this.user) this.getGroupsAction({ userUID: this.user.uid });
   },
   beforeMount() {
     if (!this.isLoggedIn) this.$router.push('/login');

@@ -57,7 +57,7 @@ export default {
         });
     },
     logoutAction({ commit }) {
-      sessionStorage.clear();
+      localStorage.clear();
       commit('setUser', initialState().user);
       router.push('/login');
     },
