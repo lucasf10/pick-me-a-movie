@@ -1,11 +1,10 @@
 <template>
   <section>
     <top-header />
-    <div class="groups-page">
+    <div class="page groups-page">
       <div class="box mt-4 mx-4">
         <h2 class="page-title mb-3">Groups</h2>
         <b-table
-          class="mb-4"
           :loading="loading"
           hoverable
           :paginated="formattedGroups && formattedGroups.length > 5"
@@ -63,7 +62,7 @@
           </b-table-column>
         </b-table>
 
-        <div class="box-footer">
+        <div class="box-footer mt-4">
           <b-button @click="showJoinGroupModal = true">Join a group</b-button>
           <b-button @click="showCreateGroupModal = true">Create a group</b-button>
         </div>
@@ -167,6 +166,13 @@ export default {
       display: flex
       gap: 15px
       justify-content: center
+
+      @media screen and (max-width: 768px)
+        position: absolute
+        z-index: 999
+        bottom: 45px
+        width: 100%
+        left: 0
 
     .b-table
       .table.is-hoverable

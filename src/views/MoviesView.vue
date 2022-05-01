@@ -1,7 +1,7 @@
 <template>
   <section>
     <top-header backButton shouldClearMoviesOnBack />
-    <div class="movies-page">
+    <div class="page movies-page">
       <div class="box mt-4 mx-4">
         <h2 class="page-title mb-3">{{ this.group && this.group.name }}</h2>
         <mobile-movie-filter :onInput="fillRealFilterInput" />
@@ -9,7 +9,6 @@
           ref="table"
           :data="formattedMovies"
           :loading="loading"
-          class="mb-4"
           checkable
           checkbox-position="left"
           checkbox-type="is-primary"
@@ -93,7 +92,7 @@
           </b-table-column>
         </b-table>
 
-        <div class="box-footer">
+        <div class="box-footer mt-4">
           <b-button
             @click="showPickMovieModal = true"
             :disabled="isListEmpty"
@@ -222,6 +221,13 @@ export default {
       display: flex
       gap: 15px
       justify-content: center
+
+      @media screen and (max-width: 768px)
+        position: absolute
+        z-index: 999
+        bottom: 45px
+        width: 100%
+        left: 0
 
     .table-wrapper
       overflow-x: initial

@@ -54,6 +54,10 @@ export default {
     background-color: #ffffff
     -webkit-box-shadow: 0px 5px 15px 5px rgba(0,0,0,0.19)
     box-shadow: 0px 5px 15px 5px rgba(0,0,0,0.19)
+    position: fixed
+    width: 100%
+    top: 0
+    z-index: 99
 
     .button
       border: none
