@@ -15,6 +15,7 @@
               ref="nameInput"
               :loading="isFetchingMovies"
               @typing="getAsyncMovieData"
+              @blur="autocompleteIsOpened = false"
               @select="option => genre = option.genres.join(' / ')"
             >
               <template slot-scope="props">
@@ -33,8 +34,8 @@
                     <small>
                       <span v-for="(genre, index) in props.option.genres" :key="index">
                         <span v-if="index !== 0"> / </span>{{ genre }}</span>
-                        <template v-if="props.option.genres.length > 0">,</template>
-                        rated <b>{{ props.option.vote_average }}</b>
+                        <br />
+                        Score (IMDb): <b>{{ props.option.vote_average }}</b>
                     </small>
                   </div>
                 </div>
@@ -44,7 +45,7 @@
 
           <b-field>
             <b-input
-              v-show="!($refs.nameInput && $refs.nameInput.isActive)"
+              v-show="!autocompleteIsOpened || movies.length === 0"
               v-model="genre"
               type="text"
               placeholder="Genre"
@@ -97,6 +98,7 @@ export default {
       movies: [],
       genres: {},
       isFetchingMovies: false,
+      autocompleteIsOpened: false,
     };
   },
   computed: {
@@ -112,6 +114,7 @@ export default {
         return;
       }
       this.isFetchingMovies = true;
+      this.autocompleteIsOpened = true;
       fetch(`${API_URL}?api_key=${process.env.VUE_APP_TMDB_API_KEY}&query=${query}&language=en-US&include_adult=true`)
         .then((res) => res.json())
         .then(({ results }) => {
@@ -144,5 +147,12 @@ export default {
       .autocomplete
           .dropdown-menu
             position: initial
+
+            .dropdown-item
+              padding-right: 1rem
+              white-space: initial
+
+              .media
+                align-items: center
 
 </style>
