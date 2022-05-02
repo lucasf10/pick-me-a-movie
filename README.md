@@ -8,8 +8,6 @@ The app lets you create and share a group that can add movies to a list and rand
 
 2. Create your own **.env** file based on **.env.example**
 
-```
-
 3. Install all dependencies with yarn:
 
 ```bash
