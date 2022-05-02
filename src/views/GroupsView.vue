@@ -149,6 +149,10 @@ export default {
     copyToClipboard(event, groupCode) {
       event.stopPropagation();
       navigator.clipboard.writeText(groupCode);
+      this.$buefy.toast.open({
+        message: 'Code copied',
+        type: 'is-primary',
+      });
     },
   },
 };
@@ -169,7 +173,7 @@ export default {
 
       @media screen and (max-width: 768px)
         position: absolute
-        z-index: 999
+        z-index: 10
         bottom: 45px
         width: 100%
         left: 0

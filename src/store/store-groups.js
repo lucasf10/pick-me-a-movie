@@ -3,6 +3,7 @@ import {
   Timestamp, updateDoc, arrayUnion, doc, query, where,
   arrayRemove,
 } from 'firebase/firestore';
+import { showToast } from '../utils/functions';
 
 const initialState = () => ({ groups: {}, loading: false });
 
@@ -53,26 +54,32 @@ export default {
       commit('setLoading', false);
     },
     async createGroupAction({ dispatch }, payload) {
+      const { groupName, userDisplayName, userUID } = payload;
       await addDoc(collection(getFirestore(), 'groups'), {
-        name: payload.groupName,
-        users: [payload.userUID],
+        name: groupName,
+        users: [userUID],
         created_at: Timestamp.fromMillis(new Date().getTime()),
         movies: [],
-        created_by: payload.userDisplayName,
+        created_by: userDisplayName,
       });
-      dispatch('getGroupsAction', { userUID: payload.userUID });
+      showToast(`Group ${groupName} created`);
+      dispatch('getGroupsAction', { userUID });
     },
     async joinGroupAction({ dispatch }, payload) {
-      await updateDoc(doc(getFirestore(), 'groups', payload.groupCode), {
+      const { userUID, groupCode } = payload;
+      await updateDoc(doc(getFirestore(), 'groups', groupCode), {
         users: arrayUnion(payload.userUID),
       });
-      dispatch('getGroupsAction', { userUID: payload.userUID });
+      showToast(`Joined group ${groupCode}`);
+      dispatch('getGroupsAction', { userUID });
     },
     async leaveGroupAction({ dispatch }, payload) {
-      await updateDoc(doc(getFirestore(), 'groups', payload.groupCode), {
-        users: arrayRemove(payload.userUID),
+      const { userUID, groupCode } = payload;
+      await updateDoc(doc(getFirestore(), 'groups', groupCode), {
+        users: arrayRemove(userUID),
       });
-      dispatch('getGroupsAction', { userUID: payload.userUID });
+      showToast(`Left group ${groupCode}`);
+      dispatch('getGroupsAction', { userUID });
     },
     clearGroupsAction({ commit }) {
       commit('setGroups', initialState().groups);

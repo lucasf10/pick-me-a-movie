@@ -1,4 +1,6 @@
-const triggerEvent = (el, type) => {
+import { ToastProgrammatic as Toast } from 'buefy';
+
+export const triggerEvent = (el, type) => {
   // IE9+ and other modern browsers
   if ('createEvent' in document) {
     const e = new Event(type);
@@ -11,4 +13,9 @@ const triggerEvent = (el, type) => {
   }
 };
 
-module.exports.triggerEvent = triggerEvent;
+export const showToast = (message) => {
+  Toast.open({
+    message,
+    type: 'is-primary',
+  });
+};

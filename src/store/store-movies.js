@@ -3,6 +3,7 @@ import {
   updateDoc, arrayRemove, addDoc, arrayUnion,
 } from 'firebase/firestore';
 import Vue from 'vue';
+import { showToast } from '../utils/functions';
 
 const initialState = () => ({ movies: {}, loading: false });
 
@@ -69,13 +70,14 @@ export default {
       if (!payload.preventLoading) await commit('setLoading', false);
     },
     async removeMovieAction({ dispatch }, payload) {
-      const { movieId, groupId } = payload;
+      const { movieId, groupId, movieName } = payload;
       const movieRef = doc(getFirestore(), 'movies', movieId);
       await deleteDoc(movieRef);
       await updateDoc(doc(getFirestore(), 'groups', groupId), {
         movies: arrayRemove(movieRef),
       });
-      dispatch('getMoviesAction', { groupId: payload.groupId });
+      showToast(`${movieName} removed`);
+      dispatch('getMoviesAction', { groupId });
     },
     async addMovieAction({ dispatch }, payload) {
       const groupRef = doc(getFirestore(), 'groups', payload.groupId);
@@ -90,6 +92,7 @@ export default {
       await updateDoc(groupRef, {
         movies: arrayUnion(docRef),
       });
+      showToast(`${payload.name} added`);
       dispatch('getMoviesAction', { groupId: payload.groupId });
     },
     async updateMovieAction({ commit }, payload) {

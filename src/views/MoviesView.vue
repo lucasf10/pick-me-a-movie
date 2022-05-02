@@ -158,7 +158,7 @@ export default {
   computed: {
     ...mapGetters('user', ['isLoggedIn', 'user']),
     ...mapGetters('groups', ['groups']),
-    ...mapGetters('movies', ['formattedMovies', 'loading']),
+    ...mapGetters('movies', ['movies', 'formattedMovies', 'loading']),
     watchedMovies() {
       return this.formattedMovies.filter((movie) => movie.watched);
     },
@@ -170,7 +170,11 @@ export default {
     ...mapActions('movies', ['getMoviesAction', 'removeMovieAction', 'addMovieAction', 'updateMovieAction', 'rateMovieAction']),
     removeMovie(event, movieId) {
       event.stopPropagation();
-      this.removeMovieAction({ movieId, groupId: this.$route.params.id });
+      this.removeMovieAction({
+        movieId,
+        groupId: this.$route.params.id,
+        movieName: this.movies[movieId].name,
+      });
     },
     onAddMovie() {
       const { name, genre } = this.$refs.addMovieModal.$data;
@@ -228,6 +232,7 @@ export default {
         bottom: 45px
         width: 100%
         left: 0
+        z-index: 10
 
     .table-wrapper
       overflow-x: initial

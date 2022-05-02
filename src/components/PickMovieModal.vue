@@ -7,7 +7,7 @@
         </header>
         <section class="modal-card-body">
           <div v-if="pickedMovie">
-            You should watch {{ pickedMovie.name }}
+            You should watch <strong>{{ pickedMovie.name }}</strong>
           </div>
           <div v-else>
             Nothing to show.
