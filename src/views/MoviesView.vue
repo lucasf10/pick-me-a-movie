@@ -24,7 +24,7 @@
 
           <b-table-column
             field="name"
-            label="Name"
+            label="Title"
             header-class="name-column"
             centered
             :searchable="!isListEmpty"
